@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using Reggie.Models;
 
 namespace Reggie.Controllers
@@ -10,28 +11,45 @@ namespace Reggie.Controllers
     public class UserController : Controller
     {
         [HttpGet]
-        public ActionResult AddOrEdit(int id=0)
+        public ActionResult Login()
         {
-            User userModel = new User();
-            return View(userModel);
+            return View();
         }
 
         [HttpPost]
-        public ActionResult AddOrEdit(User userModel)
+        public ActionResult Login(User userModel)
         {
-            using(DbModels dbModel= new DbModels())
+            using (DbModels dbModel = new DbModels())
             {
-                if (dbModel.Users.Any( x => x.Username == userModel.Username))
+                var user = dbModel.Users.FirstOrDefault(x => x.Username == userModel.Username && x.Password == userModel.Password);
+                if (user != null)
                 {
-                    ViewBag.DuplicateMessage = "Username aready exists.";
-                    return View("AddOrEdit", userModel);
+                    FormsAuthentication.SetAuthCookie(user.Username, false);
+                    return RedirectToAction("Index", "Home");
                 }
-                dbModel.Users.Add(userModel);
-                dbModel.SaveChanges();
+                else
+                {
+                    ModelState.AddModelError("", "Invalid username or password.");
+                    return View(userModel);
+                }
             }
-            ModelState.Clear();
-            ViewBag.SuccessMessage = "Registration Succesful!";
-            return View("AddOrEdit", new User());
         }
+
+        [HttpGet]
+        public ActionResult Logout()
+        {
+            FormsAuthentication.SignOut();
+            return RedirectToAction("Login", "User");
+        }
+
+        [Authorize]
+        public ActionResult Profile()
+        {
+            var username = User.Identity.Name;
+            var user = dbModel.Users.FirstOrDefault(x => x.Username == username);
+            return View(user);
+        }
+
+        // ... rest of your AddOrEdit actions ...
     }
 }
