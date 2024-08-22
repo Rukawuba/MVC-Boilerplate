@@ -4,7 +4,7 @@ This repository contains a basic ASP.NET MVC application demonstrating the Model
 
 ### Project Structure
 
-The project likely has a folder structure similar to this:
+The project's folder structure is:
 
 ```
 - Controllers
