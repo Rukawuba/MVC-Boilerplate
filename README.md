@@ -30,7 +30,7 @@ The project's folder structure is:
     - .NET Framework (version specific to the project)
 2. **Clone the Repository:**
     ```bash
-    git clone https://github.com/Rukawuba/Reggie.git
+    git clone https://github.com/Rukawuba/Reggie
     ```
 3. **Open in Visual Studio:**
     Open the project file within Visual Studio.
